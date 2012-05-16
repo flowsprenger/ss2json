@@ -5,7 +5,11 @@
 
 For example, this document:
 
-![Excel](/images/photo.jpeg "Title is optional")
+![Excel](https://github.com/guillermo/ss2json/raw/master/doc/ss2json-2.png "Title is optional")
+
+We download as an OpenOffice document (ods), and run:
+
+```ss2json -f document.ods```
 
 Will converted in this:
 

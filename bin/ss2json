@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'roo'
+require 'ss2json'
+
+
+puts Ss2Json::Cli.start

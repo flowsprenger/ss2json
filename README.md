@@ -10,7 +10,7 @@
 
 For example, this document:
 
-![Excel](https://github.com/guillermo/ss2json/raw/master/doc/ss2json-2.png "Title is optional")
+![Excel](https://github.com/wooga/ss2json/raw/master/doc/ss2json-2.png "Title is optional")
 
 We download as an OpenOffice document (ods), and run:
 
@@ -80,7 +80,7 @@ ss2json -f documents.ods -c name -b
 
 We have the rows with the title in colum 3, as in:
 
-![Excel](https://github.com/guillermo/ss2json/raw/master/doc/ss2json-1.png "Title is optional")
+![Excel](https://github.com/wooga/ss2json/raw/master/doc/ss2json-1.png "Title is optional")
 
 So we say to **ss2json** to start parsing in the row tree:
 

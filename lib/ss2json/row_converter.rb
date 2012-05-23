@@ -3,6 +3,14 @@ require 'nested_hash'
 class Ss2Json
   class RowConverter < NestedHash
 
+    # Create a nested_hash from a hash with just one level (key,value).
+    #
+    # The options are:
+    #
+    #   * **:ignored_values** Array of ignored values.
+    #   * **:show_null** Export the keys with empty values.
+    #   * **:dont_convert** Convert 10.0 float values to integers.
+    #   * **:downcase_first_letter** Convert to downcase the first letter of each key.
     def initialize(hash, options={})
       @options = options
       super(hash)

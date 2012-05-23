@@ -6,6 +6,7 @@ class Ss2Json
   class Cli
     attr_reader :content, :doc
 
+    # Parse the options from ARGV, initialize the conversion, and return the string with the output
     def self.start
       options = Ss2Json::Options.parse!
       converter =  new(options)
@@ -16,6 +17,16 @@ class Ss2Json
       end
     end
 
+    # Create a new converter the options are:
+    #
+    #   * **:file** Input file.
+    #   * **:sheet** Name of the sheet to use.
+    #   * **:first_row** Where the title of the columns is.
+    #   * **:check_column** Output only the results with a value present on the specific field.
+    #   * **:action** Could
+    #     * *:convert* Do the normal conversion.
+    #     * *:list* Will list the sheets.
+    #   * **:converter**: Options passed to the converter: Ss2Json::RowConverter
     def initialize(options)
       @options = options
       init_document

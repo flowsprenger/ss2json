@@ -31,9 +31,13 @@ class Ss2Json
     end
 
     def valid_value?(value)
-      !@options[:ignored_values].include?(value) &&
-        (@options[:show_null] || value )
+      @options[:show_null] || !ignored_values.include?(value)
     end
+
+    def ignored_values
+      (@options[:ignored_values] || []) << nil
+    end
+
 
     def sanitize_value(v)
       return v if @options[:dont_convert]

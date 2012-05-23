@@ -10,7 +10,8 @@ class Ss2Json
     def self.start
       options = Ss2Json::Options.parse!
       converter =  new(options)
-      if options[:action] == :list
+      case options[:action]
+      when :list
         converter.doc.sheets.join("\n")
       else
         JSON.pretty_generate(converter.content)

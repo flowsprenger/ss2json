@@ -9,6 +9,7 @@ class Ss2Json
       :sheet => nil,
       :file => nil,
       :check_column => nil,
+      :action => :convert,
       :converter => {
         :show_null => false,
         :dont_convert => false,

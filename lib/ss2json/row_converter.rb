@@ -46,6 +46,8 @@ class Ss2Json
     end
 
     def sanitize_key(key)
+      return key unless is_valid_key?(key)
+      key = key[0..1].downcase + key[2..-1] if @options[:downcase_first_letter]
       key
     end
 

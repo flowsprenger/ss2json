@@ -1,5 +1,10 @@
+2012-05-23  Guillermo Alvarez <guillermo@cientifico.net>
+
+	* row_converter.rb (sanitize_key) : Added the option to downcase the first
+	letter
+
 
 
 2012-05-16 Guillermo Alvarez Fernandez <guillermo@cientifico.net>
 
-    * all : Initial import
+	* all : Initial import

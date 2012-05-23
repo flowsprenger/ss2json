@@ -13,7 +13,8 @@ class Ss2Json
       :converter => {
         :show_null => false,
         :dont_convert => false,
-        :ignored_values => []
+        :ignored_values => [],
+        :downcase_first_letter => true
       }
 
     }
@@ -58,6 +59,10 @@ class Ss2Json
 
         opts.on("-d", "--disable-conversion", "Disable the conversion from floats to integers") do
           @options[:converter][:dont_convert] = true
+        end
+
+        opts.on("-l", "--disable-first-letter", "Will disable the downcase of the first letter of the key") do
+          @options[:converter][:downcase_first_letter] = false
         end
 
         opts.separator ""

@@ -26,10 +26,6 @@ class Ss2Json
       false
     end
 
-    def sanitize_value(v)
-      return v if @options[:dont_convert]
-    end
-
     def process(key,value)
       super if valid_value?(value)
     end
@@ -43,6 +39,10 @@ class Ss2Json
       return v if @options[:dont_convert]
       return v.to_i if v.is_a?(Float) && v % 1 == 0
       v
+    end
+
+    def sanitize_key(key)
+      key
     end
 
   end

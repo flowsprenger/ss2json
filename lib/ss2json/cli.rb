@@ -85,8 +85,9 @@ class Ss2Json
 
     def open
       kclass = case @options[:file][/\.(.*)$/,1]
-               when /xlsx/i then Excelx
-               when /ods/i then Openoffice
+               when /xlsx$/i then Excelx
+               when /xls$/i then Excel
+               when /ods$/i then Openoffice
                else
                  raise "Unknown format"
                end

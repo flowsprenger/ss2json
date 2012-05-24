@@ -5,6 +5,7 @@
 	* row_converter.rb (sanitize_key) : [bug] sanitify_key fail if the key is
 	just one letter. Now it is fixed.
 	* cli.rb (process_vertical) : New mode for processing in vertical was added.
+	* cli.rb (open) : Added support for old excel files (not so much tested).
 
 2012-05-23  Guillermo Alvarez <guillermo@cientifico.net>
 

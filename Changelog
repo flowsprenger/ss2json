@@ -2,13 +2,13 @@
 
 	* cli.rb (initi_document) : If you specify an invalid sheets, the message
 	right now is cleaner and showing the list of available spreadsheets.
+	* row_converter.rb (sanitize_key) : [bug] sanitify_key fail if the key is
+	just one letter. Now it is fixed.
 
 2012-05-23  Guillermo Alvarez <guillermo@cientifico.net>
 
 	* row_converter.rb (sanitize_key) : Added the option to downcase the first
 	letter
-
-
 
 2012-05-16 Guillermo Alvarez Fernandez <guillermo@cientifico.net>
 

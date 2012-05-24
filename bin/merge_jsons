@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+unless (ARGV.size >= 1 && ARGV.all?{|f| File.file?(f)})
+  $stderr.puts "Usage: #{File.basename($0)} file1.json file2.json ..."
+  exit -1
+end
+
+require 'rubygems'
+require 'json'
+
+global_hash = {}
+
+ARGV.each do |file|
+  begin
+    json = JSON.parse(File.read(file))
+  rescue => e
+    $stderr.puts "Could not parse or read the file #{file}"
+    exit -1
+  end
+
+  key = File.basename(file).split(".").first
+  global_hash[key] = json
+
+end
+
+puts JSON.pretty_generate(global_hash)

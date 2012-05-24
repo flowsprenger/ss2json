@@ -7,6 +7,8 @@
 	* cli.rb (process_vertical) : New mode for processing in vertical was added.
 	* cli.rb (open) : Added support for old excel files (not so much tested).
 	* options.rb (initialize) : Added --version support.
+	* merge_jsons : Added the binary for merging several jsons into one
+	document.
 
 2012-05-23  Guillermo Alvarez <guillermo@cientifico.net>
 

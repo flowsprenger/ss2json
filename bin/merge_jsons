@@ -2,7 +2,13 @@
 
 unless (ARGV.size >= 1 && ARGV.all?{|f| File.file?(f)})
   $stderr.puts "Usage: #{File.basename($0)} file1.json file2.json ..."
-  exit -1
+  $stderr.puts <<-EOF
+\nmerge_jsons will receive several files as an arguments and will generate
+and write to the stdout the a json hash with the name of the filename
+(without the extension) as a key, and the content of the file as a value
+for each file passed.
+  EOF
+ exit -1
 end
 
 require 'rubygems'

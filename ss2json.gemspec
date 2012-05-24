@@ -4,7 +4,7 @@ require "ss2json/version"
 
 Gem::Specification.new do |s|
   s.name        = "ss2json"
-  s.version     = Ss2json::VERSION
+  s.version     = Ss2Json::VERSION
   s.authors     = ["Guillermo Álvarez"]
   s.email       = ["guillermo@cientifico.net"]
   s.homepage    = ""

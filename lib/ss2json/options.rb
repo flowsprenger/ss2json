@@ -60,6 +60,7 @@ class Ss2Json
         end
 
         opts.separator "\nHorizontal and Vertical mode options:"
+
         opts.on("-r", "--first-row ROW_NUMBER", "Set the first row") do |row|
           die("Can't understand the row #{row}. Use a number") unless row =~ /\A\d*\z/
           @options[:first_row] = row.to_i
@@ -102,16 +103,18 @@ class Ss2Json
         end
 
 
-        opts.separator ""
-
-
-
-        opts.separator ""
+        opts.separator "\n"
 
         opts.on_tail("-h","--help", "Show this help") do
           puts opts
           exit 0
         end
+
+        opts.on_tail("--version", "Show the version") do
+          puts "#{File.basename($0)} Version: #{Ss2Json::VERSION}"
+          exit 0
+        end
+
       end.parse!
 
       die("You need to at least specify a file") if @options[:file].nil?

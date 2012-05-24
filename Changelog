@@ -1,3 +1,8 @@
+2012-05-24  Guillermo Alvarez <guillermo@cientifico.net>
+
+	* cli.rb (initi_document) : If you specify an invalid sheets, the message
+	right now is cleaner and showing the list of available spreadsheets.
+
 2012-05-23  Guillermo Alvarez <guillermo@cientifico.net>
 
 	* row_converter.rb (sanitize_key) : Added the option to downcase the first

@@ -42,7 +42,12 @@ class Ss2Json
 
     def init_document
       @doc = open
+      begin
       @doc.default_sheet = @options[:sheet] if @options[:sheet]
+      rescue RangeError => e
+        raise if @doc.sheets.include?(@options[:sheet])
+        raise "\nThe sheet #{@options[:sheet]} did not exists. The available sheets are:\n" + @doc.sheets.map{|s| "\t* #{s}\n"}.join("")
+      end
       @doc.header_line = @options[:first_row] if @options[:first_row]
     end
 

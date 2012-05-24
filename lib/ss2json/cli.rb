@@ -24,6 +24,9 @@ class Ss2Json
     #   * **:sheet** Name of the sheet to use.
     #   * **:first_row** Where the title of the columns is.
     #   * **:check_column** Output only the results with a value present on the specific field.
+    #   * **:orientation** The data orientation (:horizontal/:vertical).
+    #   * **:key_column** Column of the keys for vertical mode.
+    #   * **:value_column** Column of the values.
     #   * **:action** Could
     #     * *:convert* Do the normal conversion.
     #     * *:list* Will list the sheets.
@@ -34,7 +37,13 @@ class Ss2Json
       if options[:action] == :list
         @doc.sheets.join("\n")
       else
-        process_document
+        if options[:orientation] == :horizontal
+          process_horizontal
+        elsif options[:orientation] == :vertical
+          process_vertical
+        else
+          raise "Orientation #{options[:orientation]} not recognized"
+        end
       end
     end
 
@@ -51,7 +60,7 @@ class Ss2Json
       @doc.header_line = @options[:first_row] if @options[:first_row]
     end
 
-    def process_document
+    def process_horizontal
       @content = []
       (@options[:first_row]+1).upto(@doc.last_row).each do |row_n|
         row = @doc.find(row_n)[0]
@@ -61,6 +70,16 @@ class Ss2Json
         end
         @content << object
       end
+    end
+
+    def process_vertical
+      hash = {}
+      @options[:first_row].upto(@doc.last_row) do |row|
+        key = @doc.cell(row, @options[:key_column])
+        value = @doc.cell(row, @options[:value_column])
+        hash[key] = value
+      end
+      @content = RowConverter.new(hash, @options[:converter])
     end
 
 

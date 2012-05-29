@@ -1,3 +1,8 @@
+2012-05-29  Guillermo Alvarez <guillermo@cientifico.net>
+
+	* cli.rb (process_horizontal): Support for generating hash output instead of
+	an array using one of the keys.
+
 2012-05-24  Guillermo Alvarez <guillermo@cientifico.net>
 
 	* cli.rb (initi_document) : If you specify an invalid sheets, the message

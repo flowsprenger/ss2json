@@ -26,7 +26,7 @@ class Ss2Json
       false
     end
 
-    def process(key,value)
+    def set(key,value)
       super if valid_value?(value)
     end
 

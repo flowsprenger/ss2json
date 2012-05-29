@@ -66,14 +66,24 @@ class Ss2Json
           @options[:first_row] = row.to_i
         end
 
+        opts.separator "\nHorizontal mode options:"
+
+        opts.on("-u", "--use-key KEY", "Generate a hash instead of an array using KEY as the hash index key") do |key|
+          @options[:hash_key] = key
+        end
+
+        opts.on("--dont-remove-key", "Don't remove key from the hash") do
+          @options[:dont_remove_key] = true
+        end
+
         opts.separator "\nVertical mode options:"
 
-        opts.on("-k", "--key-column", "Column where the keys are (Default to 1)") do |column|
+        opts.on("-k", "--key-column COLUMN_NUMBER", "Column where the keys are (Default to 1)") do |column|
           die("Can't understand the column #{column}. Use a number") unless column =~ /\A\d*\z/
           @options[:key_column] = column.to_i
         end
 
-        opts.on("-a", "--value-column", "Column where the values are (Default to 2)") do |column|
+        opts.on("-a", "--value-column COLUMN_NUMBER", "Column where the values are (Default to 2)") do |column|
           die("Can't understand the column #{column}. Use a number") unless column =~ /\A\d*\z/
           @options[:value_column] = column.to_i
         end

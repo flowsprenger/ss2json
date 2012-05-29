@@ -38,6 +38,7 @@ class Ss2Json
         @doc.sheets.join("\n")
       else
         if options[:orientation] == :horizontal
+          @options[:first_row] += 1
           process_horizontal
         elsif options[:orientation] == :vertical
           process_vertical
@@ -61,20 +62,42 @@ class Ss2Json
     end
 
     def process_horizontal
-      @content = []
-      (@options[:first_row]+1).upto(@doc.last_row).each do |row_n|
-        row = @doc.find(row_n)[0]
-        object = RowConverter.new(row, @options[:converter])
-        if @options[:check_column]
-          next unless object[@options[:check_column]]
+      if @options[:hash_key]
+        @content = {}
+        each_hash_row do |hash|
+          if value = hash.get(@options[:hash_key])
+            hash.delete(@options[:hash_key]) unless @options[:dont_remove_key]
+            @content[value] = hash
+          end
         end
-        @content << object
+
+      else
+        @content = []
+        each_hash_row do |hash|
+          @options[:hash_key]
+          @content << hash
+        end
+      end
+    end
+
+    def each_row
+      (@options[:first_row]).upto(@doc.last_row).each do |row_n|
+        yield row_n
+      end
+    end
+
+    def each_hash_row
+      each_row do |row|
+        row = @doc.find(row)[0]
+        object = RowConverter.new(row,@options[:converter])
+        next if @options[:check_column] && object[@options[:check_column]].nil?
+        yield object
       end
     end
 
     def process_vertical
       hash = {}
-      @options[:first_row].upto(@doc.last_row) do |row|
+      each_row do |row|
         key = @doc.cell(row, @options[:key_column])
         value = @doc.cell(row, @options[:value_column])
         hash[key] = value

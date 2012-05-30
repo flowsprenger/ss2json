@@ -1,3 +1,9 @@
+2012-05-30  Guillermo Alvarez <guillermo@cientifico.net>
+
+	* row_converter.rb (sanitize_key): It was not calling super, so when
+	chaning the underground layer (nested_hash), this breaks the conversion of
+	arrays.
+
 2012-05-29  Guillermo Alvarez <guillermo@cientifico.net>
 
 	* cli.rb (process_horizontal): Support for generating hash output instead of

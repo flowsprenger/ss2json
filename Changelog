@@ -1,3 +1,8 @@
+2012-06-04  Guillermo Alvarez <guillermo@cientifico.net>
+
+	* row_converter.rb (sanitize_value): The strings "true" and "false" are
+	converted to json true and false booleans.
+
 2012-05-30  Guillermo Alvarez <guillermo@cientifico.net>
 
 	* row_converter.rb (sanitize_key): It was not calling super, so when

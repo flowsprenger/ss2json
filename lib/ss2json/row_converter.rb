@@ -42,6 +42,8 @@ class Ss2Json
     def sanitize_value(v)
       return v if @options[:dont_convert]
       return v.to_i if v.is_a?(Float) && v % 1 == 0
+      return true if v == "true"
+      return false if v == "false"
       v
     end
 

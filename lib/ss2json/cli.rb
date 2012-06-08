@@ -1,120 +1,80 @@
-require 'roo'
 require 'json'
 
 
-class Ss2Json
-  class Cli
-    attr_reader :content, :doc
+module Ss2Json
+  class CLI
+    MAP={
+      "ss2json-vertical" => :vertical,
+      "ss2json-horizontal" => :horizontal,
+      "ss2json-horizontal-hash" => :hash
+    }
 
-    # Parse the options from ARGV, initialize the conversion, and return the string with the output
-    def self.start
-      options = Ss2Json::Options.parse!
-      converter =  new(options)
-      case options[:action]
-      when :list
-        converter.doc.sheets.join("\n")
-      else
-        JSON.pretty_generate(converter.content)
-      end
-    end
-
-    # Create a new converter the options are:
-    #
-    #   * **:file** Input file.
-    #   * **:sheet** Name of the sheet to use.
-    #   * **:first_row** Where the title of the columns is.
-    #   * **:check_column** Output only the results with a value present on the specific field.
-    #   * **:orientation** The data orientation (:horizontal/:vertical).
-    #   * **:key_column** Column of the keys for vertical mode.
-    #   * **:value_column** Column of the values.
-    #   * **:action** Could
-    #     * *:convert* Do the normal conversion.
-    #     * *:list* Will list the sheets.
-    #   * **:converter**: Options passed to the converter: Ss2Json::RowConverter
-    def initialize(options)
-      @options = options
-      init_document
-      if options[:action] == :list
-        @doc.sheets.join("\n")
-      else
-        if options[:orientation] == :horizontal
-          @options[:first_row] += 1
-          process_horizontal
-        elsif options[:orientation] == :vertical
-          process_vertical
+    def initialize(cmd,args)
+      case cmd
+      when *MAP.keys
+        options = Ss2Json::Options.new(cmd,MAP[cmd], args).options
+        converter = Ss2Json::Converter.new(options)
+        content = converter.send(:"process_#{MAP[cmd]}")
+        puts JSON.pretty_generate(content)
+      when "merge-jsons"
+        merge_jsons(args)
+      when "order-json"
+        if $stdin.tty?
+          exec "python -mjson.tool < #{args.first}"
         else
-          raise "Orientation #{options[:orientation]} not recognized"
+          exec "python -mjson.tool "
         end
-      end
-    end
-
-    protected
-
-    def init_document
-      @doc = open
-      begin
-      @doc.default_sheet = @options[:sheet] if @options[:sheet]
-      rescue RangeError => e
-        raise if @doc.sheets.include?(@options[:sheet])
-        raise "\nThe sheet #{@options[:sheet]} did not exists. The available sheets are:\n" + @doc.sheets.map{|s| "\t* #{s}\n"}.join("")
-      end
-      @doc.header_line = @options[:first_row] if @options[:first_row]
-    end
-
-    def process_horizontal
-      if @options[:hash_key]
-        @content = {}
-        each_hash_row do |hash|
-          if value = hash.get(@options[:hash_key])
-            hash.delete(@options[:hash_key]) unless @options[:dont_remove_key]
-            @content[value] = hash
-          end
-        end
-
+      when "compress-json"
+        require 'json'
+        puts JSON.parse(File.read(args.first)).to_json
+      when "catss"
+        options = {:file => args.shift, :sheet => args.shift }
+        converter = Ss2Json::Converter.new(options)
+        require 'terminal-table'
+        puts ::Terminal::Table.new :rows => converter.to_a
+      when "lsss"
+        options = {:file => args.first}
+        converter = Ss2Json::Converter.new(options)
+        puts converter.sheets.join("\n")
       else
-        @content = []
-        each_hash_row do |hash|
-          @options[:hash_key]
-          @content << hash
+        $stderr.puts "Command #{cmd} not recognize"
+        exit -1
+      end
+      exit 0
+    end
+
+    def merge_jsons(args)
+      unless (args.size >= 1 && args.all?{|f| File.file?(f)})
+        $stderr.puts "Usage: #{File.basename($0)} file1.json file2.json ..."
+        $stderr.puts <<-EOF
+\nmerge_jsons will receive several files as an arguments and will generate
+and write to the stdout the a json hash with the name of the filename
+(without the extension) as a key, and the content of the file as a value
+for each file passed.
+        EOF
+        exit -1
+      end
+
+      require 'json'
+
+      global_hash = {}
+
+      args.each do |file|
+        begin
+          json = JSON.parse(File.read(file))
+        rescue => e
+          $stderr.puts "Could not parse or read the file #{file}"
+          exit -1
         end
+
+        key = File.basename(file).split(".").first
+        global_hash[key] = json
+
       end
+
+      puts JSON.pretty_generate(global_hash)
     end
 
-    def each_row
-      (@options[:first_row]).upto(@doc.last_row).each do |row_n|
-        yield row_n
-      end
-    end
-
-    def each_hash_row
-      each_row do |row|
-        row = @doc.find(row)[0]
-        object = RowConverter.new(row,@options[:converter])
-        next if @options[:check_column] && object[@options[:check_column]].nil?
-        yield object
-      end
-    end
-
-    def process_vertical
-      hash = {}
-      each_row do |row|
-        key = @doc.cell(row, @options[:key_column])
-        value = @doc.cell(row, @options[:value_column])
-        hash[key] = value
-      end
-      @content = RowConverter.new(hash, @options[:converter])
-    end
-
-
-    def open
-      kclass = case @options[:file][/\.(.*)$/,1]
-               when /xlsx$/i then Excelx
-               when /xls$/i then Excel
-               when /ods$/i then Openoffice
-               else
-                 raise "Unknown format"
-               end
-      kclass.new(@options[:file])
-    end
   end
 end
+

@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "nested_hash"
   s.add_runtime_dependency "roo"
+  s.add_runtime_dependency "terminal-table"
 end

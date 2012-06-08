@@ -1,8 +1,10 @@
 
-class Ss2json
-end
+module Ss2Json
 
-require "ss2json/version"
-require 'ss2json/options'
-require 'ss2json/row_converter'
-require 'ss2json/cli'
+  autoload :Version, "ss2json/version"
+  autoload :CLI, 'ss2json/cli'
+  autoload :Converter, 'ss2json/converter'
+  autoload :Options, 'ss2json/options'
+  autoload :RowConverter, 'ss2json/row_converter'
+
+end

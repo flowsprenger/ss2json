@@ -1,0 +1,7 @@
++-------------------------------+--------+
+| version                       | 1.2.3  |
+| initial_options.coins         | 450.0  |
+| initial_options.lives         | 5.0    |
+| initial_options.plants.1.name | pepe   |
+| initial_options.plants.2.name | juanjo |
++-------------------------------+--------+

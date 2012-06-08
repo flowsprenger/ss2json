@@ -1,8 +1,35 @@
-
 # ss2json
 
+**ss2json** is a collection of tools to help in the conversion of spreadsheet to json.
 
-**ss2json** is a SpreadSheet To Json converter. It follow a few rules for generating nested hash.
+* [ss2json-vertical](#ss2json-vertical) Generate an array of rows. Each row is going to be a hash.
+* [ss2json-vertical-hash](#ss2json-vertical-hash) Generate a hash of elements. Each element is a hash that represents a column. The key of that hash is a column.
+* [ss2json-horizontal](#ss2json-horizontal) Generate a hash from a key value pairs. The keys are in one column and the values in other.
+* [merge-jsons](#merge-jsons) Generate a hash that have the filename as a key, and the content as a value.
+* [order-json](#order-jsons) Order the keys of the hashes of a json file.
+* [compress-json](#compress-json) Compress the given json. The lasts commands output in pretty format (human readable). You can pipe through this command to compress.
+* [catss](#catss) Shows on the terminal the content of the sheet
+
+## Tools
+
+### ss2json-vertical
+
+Lets start with this command to show the basic feature of ss2json.
+Suppose we have this sheet:
+
+      | A  | B         | C             | D            | E             | F            | G               | H                 | I         |
+    1 | id | name      | childs.1.name | childs.1.age | childs.2.name | Childs.2.age | address.street  | address.post_code | i.notes   |
+    2 | 1  | Guillermo |               |              |               |              | Calle de Eros 7 | 28018             | nice guy  |
+    3 | 2  | Epi       | Carlos        |              |               |              | Castellana      | 28020             |           |
+    4 | 3  | Esther    | Roberto       | 3            | Carlos        | 4            |                 |                   |           |
+    5 | 4  |           |               |              |               |              |                 |                   | left note |
+
+What we see here is that the column names (row 1) have a special encoding.
+
+### ss2json-hash
+
+### ss2json-horizontal
+
 
 ## Tutorial
 

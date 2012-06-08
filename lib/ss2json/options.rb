@@ -1,6 +1,6 @@
 require 'optparse'
 
-class Ss2Json
+module Ss2Json
 
   class Options < OptionParser
     attr_reader :options
@@ -22,70 +22,42 @@ class Ss2Json
 
     }
 
-    def self.parse!
-      new.options
-    end
-
-    def initialize
+    def initialize(name, action, args)
       @options = DEFAULT_OPTIONS
       @help = nil
-      super do |opts|
+      super() do |opts|
         @help = opts
 
-        opts.banner =  "Usage: #{File.basename $0} -f FILENAME [options]"
-
-        opts.separator "\nMode options:"
-
-        opts.on("-h", "--horizontal", "Normal processing mode (DEFAULT). Can be ommited") do
-          @options[:orientation] = :horizontal
-        end
-
-        opts.on("-v", "--vertical", "Process the spreadhsheet on vertical") do
-          @options[:orientation] = :vertical
-        end
-
-        opts.on("-l", "--list-sheets", "Return the list of sheets") do |file|
-          @options[:action] = :list
-        end
-
-        opts.separator "Common options:"
-
-        opts.on("-f", "--file FILENAME", "Use the filename") do |file|
-          File.file?(file) or die("Can't find the file #{file}.")
-          @options[:file] = File.expand_path(file)
+        if action==:hash
+          opts.banner =  "Usage: #{name} FILENAME KEY [options]"
+        else
+          opts.banner =  "Usage: #{name} FILENAME [options]"
         end
 
         opts.on("-s", "--sheet SHEET_NAME", "Use other that the first table") do |sheet|
           @options[:sheet] = sheet
         end
 
-        opts.separator "\nHorizontal and Vertical mode options:"
-
         opts.on("-r", "--first-row ROW_NUMBER", "Set the first row") do |row|
           die("Can't understand the row #{row}. Use a number") unless row =~ /\A\d*\z/
           @options[:first_row] = row.to_i
         end
 
-        opts.separator "\nHorizontal mode options:"
-
-        opts.on("-u", "--use-key KEY", "Generate a hash instead of an array using KEY as the hash index key") do |key|
-          @options[:hash_key] = key
-        end
-
         opts.on("--dont-remove-key", "Don't remove key from the hash") do
           @options[:dont_remove_key] = true
-        end
+        end if action==:hash
 
-        opts.separator "\nVertical mode options:"
 
-        opts.on("-k", "--key-column COLUMN_NUMBER", "Column where the keys are (Default to 1)") do |column|
-          die("Can't understand the column #{column}. Use a number") unless column =~ /\A\d*\z/
-          @options[:key_column] = column.to_i
-        end
+        if action==:vertical
+          opts.on("-k", "--key-column COLUMN_NUMBER", "Column where the keys are (Default to 1)") do |column|
+            die("Can't understand the column #{column}. Use a number") unless column =~ /\A\d*\z/
+              @options[:key_column] = column.to_i
+          end
 
-        opts.on("-a", "--value-column COLUMN_NUMBER", "Column where the values are (Default to 2)") do |column|
-          die("Can't understand the column #{column}. Use a number") unless column =~ /\A\d*\z/
-          @options[:value_column] = column.to_i
+          opts.on("-a", "--value-column COLUMN_NUMBER", "Column where the values are (Default to 2)") do |column|
+            die("Can't understand the column #{column}. Use a number") unless column =~ /\A\d*\z/
+              @options[:value_column] = column.to_i
+          end
         end
 
         opts.separator "\nData options:"
@@ -106,10 +78,11 @@ class Ss2Json
           @options[:converter][:downcase_first_letter] = false
         end
 
-        opts.separator "\nFilter options:"
 
-        opts.on("-c", "--check-column NAME", "Only output objects wich his property NAME is not in IGNORED VALUES") do |t|
-          @options[:check_column] = t
+        if action!=:vertical
+          opts.on("-c", "--check-column NAME", "Only output objects wich his property NAME is not in IGNORED VALUES") do |t|
+            @options[:check_column] = t
+          end
         end
 
 
@@ -125,9 +98,18 @@ class Ss2Json
           exit 0
         end
 
-      end.parse!
+      end.parse!(args)
 
-      die("You need to at least specify a file") if @options[:file].nil?
+      if (action!=:hash && args.size == 1 || (action==:hash && args.size == 2))
+        @options[:file] = args.first
+        unless File.file?(@options[:file])
+          $stderr.puts "File #{@options.file} not found"
+          exit -5
+        end
+        @options[:hash_key] = args.last if action==:hash
+      else
+        die("Incorrect number of parameters")
+      end
     end
 
     def die(msg)

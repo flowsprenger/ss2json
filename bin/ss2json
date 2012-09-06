@@ -1,0 +1,43 @@
+#!/usr/bin/env ruby
+
+if ARGV[0] && !(ARGV[0] =~ /^-/)
+  begin
+    require "ss2json-commands/#{ARGV[0]}"
+    kommand = SS2JSON::Command.const_get(ARGV[0].gsub(/^.|_./){|a| a[-1].chr.upcase})
+    kommand.new(ARGV[1..-1])
+  rescue LoadError
+    $stderr.puts "ss2json: '#{ARGV[0]}' is not a ss2json command. See 'ss2json --help'."
+    exit -1
+  end
+else
+
+  require 'ss2json/command'
+  require 'optparse'
+
+  available_commands = []
+  SS2JSON::Command.load_all
+  SS2JSON::Command.commands.each do |command|
+    available_commands << [command.name, command.description]
+  end
+
+  opts = OptionParser.new do |opts|
+    opts.banner = "Usage: #{$0} ACTION [options]"
+
+    opts.separator ""
+    opts.separator "Where ACTION could be:"
+    available_commands.each do |cmd|
+      opts.separator "\t#{cmd[0]}\t\t#{cmd[1]}"
+    end
+    opts.separator ""
+
+    opts.on("-h", "--help", "Show this help") do
+      puts opts
+    end
+  end
+
+  ARGV[0] = "--help" if ARGV.size == 0
+  opts.parse!(ARGV)
+
+
+
+end

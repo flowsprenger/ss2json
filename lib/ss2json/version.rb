@@ -1,3 +1,3 @@
-module Ss2Json
-  VERSION = "0.3.0"
+module SS2JSON
+  VERSION = "0.4.0"
 end

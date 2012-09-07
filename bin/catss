@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'ss2json'
-
-Ss2Json::CLI.new(File.basename($0),ARGV)

@@ -1,26 +1,25 @@
 
 require 'roo'
+require 'ss2json/row_converter'
 
-module Ss2Json
+module SS2JSON
   class Converter
 
     # Create a new converter the options are:
     #
     #   * **:file** Input file.
     #   * **:sheet** Name of the sheet to use.
-    #   * **:first_row** Where the title of the columns is.
+    #   * **:first_row** Which is the first row of real data
+    #   * **:title_row** Where the title of the columns is.
     #   * **:check_column** Output only the results with a value present on the specific field.
     #   * **:key_column** Column of the keys for vertical mode.
     #   * **:value_column** Column of the values.
-    #   * **:action** Could
-    #     * *:convert* Do the normal conversion.
-    #     * *:list* Will list the sheets.
     #   * **:converter**: Options passed to the converter: Ss2Json::RowConverter
     def initialize(options={})
       @options = options
       @doc = get_document_type.new(@options[:file])
       set_default_sheet(@options[:sheet]) if @options[:sheet]
-      set_header_line(@options[:first_row]) if @options[:first_row]
+      set_header_line(@options[:title_row]) if @options[:title_row]
     end
 
     def process_horizontal
@@ -33,16 +32,6 @@ module Ss2Json
       @content
     end
 
-    def process_hash
-      @content = {}
-      each_hash_row do |hash|
-        if value = hash.get(@options[:hash_key])
-          hash.delete(@options[:hash_key]) unless @options[:dont_remove_key]
-          @content[value] = hash
-        end
-      end
-      @content
-    end
 
     def to_a
       @doc.to_matrix.to_a
@@ -72,7 +61,6 @@ module Ss2Json
       raise "\nThe sheet #{sheet} did not exists. The available sheets are:\n" + sheets.map{|s| "\t* #{s}\n"}.join("")
     end
 
-
     def set_header_line(first_row)
       @doc.header_line = first_row
     end
@@ -86,7 +74,8 @@ module Ss2Json
     def each_hash_row
       each_row do |row|
         row = @doc.find(row)[0]
-        object = RowConverter.new(row,@options[:converter])
+        object = RowConverter.new( row, @options[:converter] )
+        # TODO: Fix nested_hash to make set and get work on already converted items
         next if @options[:check_column] && object[@options[:check_column]].nil?
         yield object
       end

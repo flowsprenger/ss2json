@@ -1,5 +1,3 @@
-
-
 module SS2JSON
   class Command
 
@@ -21,3 +19,4 @@ module SS2JSON
     end
   end
 end
+

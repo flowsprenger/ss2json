@@ -1,16 +1,33 @@
-require 'optparse'
 
-module Ss2Json
+require 'ss2json/command'
+require 'ss2json/converter'
+require 'optparse'
+require 'json'
+
+class ToArray < SS2JSON::Command
+
+  def self.name
+    "to_array"
+  end
+
+  def self.description
+    "Convert a spreadsheet to a json array, respecting the order in wich the rows are."
+  end
+
+  def initialize(options)
+    options = Options.new(options).options
+    output = Converter.new(options).process
+    puts JSON.pretty_generate(output)
+  end
 
   class Options < OptionParser
     attr_reader :options
     DEFAULT_OPTIONS = {
-      :first_row => 1,
+      :title_row => 1,
+      :first_row => 2,
       :sheet => nil,
       :file => nil,
       :check_column => nil,
-      :action => :convert,
-      :orientation => :horizontal,
       :key_column => 1,
       :value_column => 2,
       :converter => {
@@ -22,20 +39,21 @@ module Ss2Json
 
     }
 
-    def initialize(name, action, args)
+    def initialize(args)
       @options = DEFAULT_OPTIONS
       @help = nil
       super() do |opts|
         @help = opts
 
-        if action==:hash
-          opts.banner =  "Usage: #{name} FILENAME KEY [options]"
-        else
-          opts.banner =  "Usage: #{name} FILENAME [options]"
-        end
+        opts.banner =  "Usage: #{$0} FILENAME [options]"
 
         opts.on("-s", "--sheet SHEET_NAME", "Use other that the first table") do |sheet|
           @options[:sheet] = sheet
+        end
+
+        opts.on("-t", "--title-row ROW_NUMBER", "Row in wich the titles are. Default: #{DEFAULT_OPTIONS[:title_row]}") do |row|
+          die("Can't understand the row #{row}. Use a number") unless row =~ /\A\d*\z/
+          @options[:title_row] = row.to_i
         end
 
         opts.on("-r", "--first-row ROW_NUMBER", "Set the first row") do |row|
@@ -43,21 +61,8 @@ module Ss2Json
           @options[:first_row] = row.to_i
         end
 
-        opts.on("--dont-remove-key", "Don't remove key from the hash") do
-          @options[:dont_remove_key] = true
-        end if action==:hash
-
-
-        if action==:vertical
-          opts.on("-k", "--key-column COLUMN_NUMBER", "Column where the keys are (Default to 1)") do |column|
-            die("Can't understand the column #{column}. Use a number") unless column =~ /\A\d*\z/
-              @options[:key_column] = column.to_i
-          end
-
-          opts.on("-a", "--value-column COLUMN_NUMBER", "Column where the values are (Default to 2)") do |column|
-            die("Can't understand the column #{column}. Use a number") unless column =~ /\A\d*\z/
-              @options[:value_column] = column.to_i
-          end
+        opts.on("-c", "--check-column NAME", "Only output objects wich his property NAME is not in IGNORED VALUES") do |t|
+          @options[:check_column] = t
         end
 
         opts.separator "\nData options:"
@@ -78,14 +83,6 @@ module Ss2Json
           @options[:converter][:downcase_first_letter] = false
         end
 
-
-        if action!=:vertical
-          opts.on("-c", "--check-column NAME", "Only output objects wich his property NAME is not in IGNORED VALUES") do |t|
-            @options[:check_column] = t
-          end
-        end
-
-
         opts.separator "\n"
 
         opts.on_tail("-h","--help", "Show this help") do
@@ -94,19 +91,18 @@ module Ss2Json
         end
 
         opts.on_tail("--version", "Show the version") do
-          puts "#{File.basename($0)} Version: #{Ss2Json::VERSION}"
+          puts "#{File.basename($0)} Version: #{SS2JSON::VERSION}"
           exit 0
         end
 
       end.parse!(args)
 
-      if (action!=:hash && args.size == 1 || (action==:hash && args.size == 2))
+      if (args.size == 1)
         @options[:file] = args.first
         unless File.file?(@options[:file])
           $stderr.puts "File #{@options.file} not found"
           exit -5
         end
-        @options[:hash_key] = args.last if action==:hash
       else
         die("Incorrect number of parameters")
       end
@@ -119,4 +115,14 @@ module Ss2Json
     end
   end
 
+  class Converter < SS2JSON::Converter
+    def process
+      @options[:first_row] += 1
+      @content = []
+      each_hash_row do |hash|
+        @content << hash
+      end
+      @content
+    end
+  end
 end

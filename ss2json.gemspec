@@ -22,11 +22,11 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "roo"
   s.add_runtime_dependency "terminal-table"
   s.add_runtime_dependency "json"
-  s.add_runtime_dependency "system_timer"
+  # s.add_runtime_dependency "system_timer"
 
-  s.add_development_dependency "ronn"
-  s.add_development_dependency "rake"
-  s.add_development_dependency "ruby-debug"
+  # s.add_development_dependency "ronn"
+  # s.add_development_dependency "rake"
+  # s.add_development_dependency "ruby-debug"
 
 #   s.post_install_message = <<-EOF
 # This project have man pages. Install gem-man and follow common instructions on google to be able to access that man pages through man(1)

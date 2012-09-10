@@ -86,6 +86,7 @@ module SS2JSON
       when /xlsx$/i then Excelx
       when /xls$/i then Excel
       when /ods$/i then Openoffice
+      when /csv$/i then Csv
       else
         raise "Unknown format"
       end

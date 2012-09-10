@@ -1,0 +1,15 @@
+Incorrect number of parameters
+Usage: bin/ss2json constants FILENAME [options]
+    -s, --sheet SHEET_NAME           Use other that the first table
+    -r, --first-row ROW_NUMBER       Set the first row
+    -k, --key-column COLUMN_NUMBER   Column where the keys are (Default to 1)
+    -a, --value-column COLUMN_NUMBER Column where the values are (Default to 2)
+
+Data options:
+    -i, --ignore-value VALUE         Ignore the fields with that value. Could be use several times
+    -b, --include-blank              Generate a json with the values included in the ignore list
+    -d, --disable-conversion         Disable the conversion from floats to integers
+    -l, --disable-first-letter       Will disable the downcase of the first letter of the key
+
+    -h, --help                       Show this help
+        --version                    Show the version

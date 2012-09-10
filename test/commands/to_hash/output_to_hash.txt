@@ -1,0 +1,15 @@
+Incorrect number of parameters
+Usage: bin/ss2json to_hash FILENAME KEY [options]
+    -s, --sheet SHEET_NAME           Use other that the first table
+    -t, --title-row ROW_NUMBER       Row in wich the titles are. Default: 1
+    -r, --first-row ROW_NUMBER       Set the first row of real data. Default: 2
+    -n, --dont-remove-key            When using a column in the excel as a key for the hash, that column is removed. This option avoid that behaviour
+
+Data options:
+    -i, --ignore-value VALUE         Ignore the fields with that value. Could be use several times
+    -b, --include-blank              Generate a json with the values included in the ignore list
+    -d, --disable-conversion         Disable the conversion from floats to integers
+    -l, --disable-first-letter       Will disable the downcase of the first letter of the key
+
+    -h, --help                       Show this help
+        --version                    Show the version

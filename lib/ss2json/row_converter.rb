@@ -1,6 +1,6 @@
 require 'nested_hash'
 
-module Ss2Json
+module SS2JSON
   class RowConverter < NestedHash
 
     # Create a nested_hash from a hash with just one level (key,value).

@@ -5,6 +5,8 @@ if ARGV[0] && !(ARGV[0] =~ /^-/)
     require "ss2json-commands/#{ARGV[0]}"
     kommand = SS2JSON::Command.const_get(ARGV[0].gsub(/^.|_./){|a| a[-1].chr.upcase})
     $0="#{$0} #{ARGV[0]}"
+    kommand.new(ARGV[1..-1])
+  rescue LoadError => e
     $stderr.puts "ss2json: '#{ARGV[0]}' is not a ss2json command. See 'ss2json --help'. (#{e.message})"
     exit -1
   end

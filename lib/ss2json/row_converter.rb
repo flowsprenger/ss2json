@@ -19,6 +19,7 @@ class Ss2Json
     protected
 
     def is_valid_key?(key)
+      return !(key =~ Regexp.new("/#{@options[:key_pattern]}/")) if @options[:key_pattern]
       super && ! (key =~ /^i\./i)
     end
 

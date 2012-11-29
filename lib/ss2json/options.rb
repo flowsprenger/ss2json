@@ -5,20 +5,21 @@ class Ss2Json
   class Options < OptionParser
     attr_reader :options
     DEFAULT_OPTIONS = {
-      :first_row => 1,
-      :sheet => nil,
-      :file => nil,
-      :check_column => nil,
-      :action => :convert,
-      :orientation => :horizontal,
-      :key_column => 1,
-      :value_column => 2,
-      :converter => {
-        :show_null => false,
-        :dont_convert => false,
-        :ignored_values => [],
-        :downcase_first_letter => true
-      }
+        :first_row => 1,
+        :sheet => nil,
+        :file => nil,
+        :check_column => nil,
+        :action => :convert,
+        :orientation => :horizontal,
+        :key_column => 1,
+        :value_column => 2,
+        :converter => {
+            :show_null => false,
+            :dont_convert => false,
+            :ignored_values => [],
+            :downcase_first_letter => true,
+            :key_pattern => nil
+        }
 
     }
 
@@ -106,11 +107,16 @@ class Ss2Json
           @options[:converter][:downcase_first_letter] = false
         end
 
+        opts.on("--key-pattern PATTERN", "keys must match against PATTERN defaults to '\\A[\\.\\w]+\\z'") do |pattern|
+          @options[:converter][:key_pattern] = pattern
+        end
+
         opts.separator "\nFilter options:"
 
         opts.on("-c", "--check-column NAME", "Only output objects wich his property NAME is not in IGNORED VALUES") do |t|
           @options[:check_column] = t
         end
+
 
 
         opts.separator "\n"

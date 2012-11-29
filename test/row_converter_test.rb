@@ -57,4 +57,16 @@ class Ss2Json::RowConverterTest < Test::Unit::TestCase
     new_hash = Ss2Json::RowConverter.new(initial_hash)
     assert_equal({"name" => {"i" => 5}}, new_hash)
   end
+
+  def test_it_applies_key_pattern
+    initial_hash = { "@name.i" => 5}
+    options = {:key_pattern => '\A[\.\w\-@]+\z'}
+
+    new_hash = Ss2Json::RowConverter.new(initial_hash, options)
+    assert_equal({"@name" => {"i" => 5}}, new_hash)
+
+    new_hash = Ss2Json::RowConverter.new(initial_hash)
+    assert_equal({}, new_hash)
+  end
+
 end
